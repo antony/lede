@@ -1,0 +1,354 @@
+/dts-v1/;
+
+#include "vr9.dtsi"
+
+#include <dt-bindings/input/input.h>
+
+/ {
+	model = "VGV952CJW33 - EasyBox 904 xDSL";
+
+	aliases {
+		led-boot = &status;
+		led-failsafe = &status;
+	};
+
+	memory@0 {
+		reg = <0x0 0x8000000>;
+	};
+
+	fpi@10000000 {
+		localbus@0 {
+			nand-parts@0 {
+				compatible = "gen_nand", "lantiq,nand-xway";
+				lantiq,cs = <1>;
+				bank-width = <2>;
+				reg = <0x1 0x0 0x2000000>;
+				#address-cells = <1>;
+				#size-cells = <1>;
+
+				/*
+					Arcadyan decided to change the bad block table patterns of
+					the u-boot to:
+
+					bbt_pattern[] = {'A', 'R', 'C', 'A' };
+					mirror_pattern[] = {'a', 'c', 'r', 'a' };
+
+					instead of the ones used by an unmodified lantiq u-boot,
+					upstream u-boot and the kernel:
+
+					bbt_pattern[] = {'B', 'b', 't', '0' }
+					mirror_pattern[] = {'1', 't', 'b', 'B' }
+
+					which makes the on flash bad block table incompatible with
+					the linux kernel.
+
+					Someone needs to add support for the Arcadyan pattern to
+					the linux kernel. Enabling nand-on-flash-bbt support
+					without	having support for the Arcadyan pattern will lead
+					to a alternating initialisation of the bad block table by
+					the bootloader or the linux kernel.
+				*/
+				/*
+				nand-on-flash-bbt;
+				*/
+				nand-ecc-strength = <3>;
+				nand-ecc-step-size = <256>;
+
+				partitions {
+					compatible = "fixed-partitions";
+					#address-cells = <1>;
+					#size-cells = <1>;
+
+					partition@0 {
+						label = "uboot";
+						reg = <0x0 0x40000>;
+					};
+
+					partition@40000 {
+						label = "rootfs1";
+						reg = <0x40000 0x3C00000>;
+					};
+
+					partition@3C40000 {
+						label = "kernel1";
+						reg = <0x3C40000 0x500000>;
+					};
+
+					partition@4140000 {
+						label = "tmp1";
+						reg = <0x4140000 0x100000>;
+					};
+
+					partition@4240000 {
+						label = "tmp2";
+						reg = <0x4240000 0x200000>;
+					};
+	
+					partition@4440000 {
+						label = "sysconfig";
+						reg = <0x4440000 0x100000>;
+					};
+
+					partition@4540000 {
+						label = "ubootconfig";
+						reg = <0x4540000 0x100000>;
+					};
+
+					/* 0x464002d == rt3883 EEPROM */
+					/* 0x4640200 == rt5392 EEPROM */
+					caldata: partition@4640000 {
+						label = "fwdiag";
+						reg = <0x4640000 0xC0000>;
+					};
+
+					partition@4700000 {
+						label = "lcdimage";
+						reg = <0x4700000 0x300000>;
+					};
+
+					partition@4A00000 {
+						label = "mfgconfig";
+						reg = <0x4A00000 0x100000>;
+					};
+
+					partition@4B00000 {
+						label = "sipdata";
+						reg = <0x4B00000 0x100000>;
+					};
+
+					partition@4C00000 {
+						label = "voice";
+						reg = <0x4C00000 0x4000000>;
+					};
+
+					partition@8C00000 {
+						label = "misc";
+						reg = <0x8C00000 0x13200000>;
+					};
+
+					partition@1BE00000 {
+						label = "rootfs2";
+						reg = <0x1BE00000 0x3c00000>;
+					};
+	
+					partition@1FA00000 {
+						label = "kernel2";
+						reg = <0x1FA00000 0x500000>;
+					};
+
+					full {
+						label = "full";
+						reg = <0x0 0x1FF00000>;
+					};
+
+					/*
+					 * last 512 KiB are unused
+					 */
+
+					/*
+					 * last 512 KiB are for the bad block table, not writable
+					 */
+				};
+			};
+		};
+
+		gpio: pinmux@E100B10 {
+			pinctrl-names = "default";
+			pinctrl-0 = <&state_default>;
+
+			state_default: pinmux {
+				mdio {
+					lantiq,groups = "mdio";
+					lantiq,function = "mdio";
+				};
+				nand_out {
+					lantiq,groups = "nand cle", "nand ale";
+					lantiq,function = "ebu";
+					lantiq,output = <1>;
+					lantiq,open-drain = <0>;
+					lantiq,pull = <0>;
+				};
+				nand_cs1 {
+					lantiq,groups = "nand cs1";
+					lantiq,function = "ebu";
+					lantiq,open-drain = <0>;
+					lantiq,pull = <0>;
+				};
+			};
+		};
+
+		ifxhcd@E101000 {
+			status = "okay";
+			gpios = <&gpio 33 GPIO_ACTIVE_HIGH>;
+		};
+	};
+
+	gpio-keys-polled {
+		compatible = "gpio-keys-polled";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		poll-interval = <100>;
+
+		reset {
+			label = "reset";
+			gpios = <&gpio 40 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_RESTART>;
+		};
+
+		wps {
+			label = "wps";
+			gpios = <&gpio 3 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_WPS_BUTTON>;
+		};
+	};
+
+	gpio-leds {
+		compatible = "gpio-leds";
+
+		status: status {
+			label = "vgv952cjw33:red:status";
+			gpios = <&gpio 31 GPIO_ACTIVE_HIGH>;
+		};
+	};
+
+	gphy-xrx200 {
+		compatible = "lantiq,phy-xrx200";
+		firmware1 = "lantiq/vr9_phy11g_a1x.bin";	/*VR9 1.1*/
+		firmware2 = "lantiq/vr9_phy11g_a2x.bin";	/*VR9 1.2*/
+		phys = [ 00 01 ];
+	};
+
+	/*
+	 * Values from OEM firmware:
+	 *
+	 * mode 0 == RTL8367_EXTIF_MODE_DISABLED
+	 * mode 1 == RTL8367_EXTIF_MODE_RGMII
+	 * mode 2 == RTL8367_EXTIF_MODE_MII_MAC
+	 * mode 3 == RTL8367_EXTIF_MODE_MII_PHY
+	 *
+	 * root@easy:~# rtl8367_switch_utility PortForceLinkExtCfgGet 6
+	 *
+	 * Got extension port id = 6(1) force link configureation successfully!!!
+	 *  - Mode       = 1
+	 *
+	 *  - Force mode = 1
+	 *  - Speed      = 2(1000M)
+	 *  - Duplex     = 1
+	 *  - Link       = 1
+	 *  - Nway       = 0
+	 *  - Txpause    = 0
+	 *  - Rxpause    = 0
+	 *
+	 * root@easy:~# rtl8367_switch_utility PortRGMIIClkExtGet 6
+	 *
+	 * Got extension port id = 6(1) rgmii tx delay = 1, rx delay = 0 successfully!!!
+	 */
+	rtl8367rb {
+		compatible = "realtek,rtl8367b";
+		realtek,extif1 = <
+			1 /* txdelay */
+			0 /* rxdelay */
+			1 /* mode: RTL8367_EXTIF_MODE_RGMII */
+			0 /* force_mode */
+			0 /* txpause */
+			0 /* rxpause */
+			1 /* link */
+			1 /* duplex: FullDuplex */
+			2 /* speed: Gigabit */
+		>;
+		mdio = <&mdio0>;
+	};
+};
+
+&pcie0 {
+	status = "disabled";
+};
+
+/*
+ * Values from OEM firmware:
+ *
+ * Port0 + Port5:
+ * - Force Port Duplex Mode.   = 1
+ * - Port Duplex Status.       = 0
+ * - Force Link Speed.         = 1
+ * - Port link speed status    = 1000
+ * - Force Link                = 1
+ * - Force link status         = 0
+ * - Selected interface mode   = 3
+ * - Select if MAC or PHY mode = 0
+ * - Interface clock Mode      = 0
+ *
+ * interface mode 1 == MII_CFG_MODE_MIIM/MII_CFG_MODE_MIIP
+ * interface mode 2 == MII_CFG_MODE_RMIIM/MII_CFG_MODE_RMIIP
+ * interface mode 3 == MII_CFG_MODE_RGMII
+ */
+
+&eth0 {
+	lan: interface@0 {
+		compatible = "lantiq,xrx200-pdi";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg = <0>;
+		lantiq,switch;
+
+		/* realtek switch */
+		ethernet@0 {
+			compatible = "lantiq,xrx200-pdi-port";
+			reg = <0>;
+			phy-mode = "rgmii";
+			phy-handle = <&phy0>;
+		};
+
+		/* SoC phy - not physically connected? */
+		ethernet@2 {
+			compatible = "lantiq,xrx200-pdi-port";
+			reg = <2>;
+			phy-mode = "gmii";
+			phy-handle = <&phy11>;
+		};
+
+		/* SoC phy - wan */
+		ethernet@4 {
+			compatible = "lantiq,xrx200-pdi-port";
+			reg = <4>;
+			phy-mode = "gmii";
+			phy-handle = <&phy13>;
+		};
+
+		/* rt3883 soc */
+		/*
+		ethernet@5 {
+			compatible = "lantiq,xrx200-pdi-port";
+			reg = <5>;
+			phy-mode = "rgmii";
+			phy-handle = <&phy5>;
+		};
+		*/
+	};
+
+	mdio0: mdio@0 {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		compatible = "lantiq,xrx200-mdio";
+
+		phy0: ethernet-phy@0 {
+			reg = <0x0>;
+		};
+
+		/*
+		phy5: ethernet-phy@5 {
+			reg = <0x5>;
+		};
+		*/
+
+		phy11: ethernet-phy@11 {
+			reg = <0x11>;
+			compatible = "lantiq,phy11g", "ethernet-phy-ieee802.3-c22";
+		};
+
+		phy13: ethernet-phy@13 {
+			reg = <0x13>;
+			compatible = "lantiq,phy11g", "ethernet-phy-ieee802.3-c22";
+		};
+	};
+};

@@ -340,6 +340,13 @@ define uboot/vgv7519_ram
   DEPS:=@TARGET_lantiq_xrx200
 endef
 
+define uboot/vgv952cjw33_ram
+  TITLE:=U-Boot for Arcadyan VGV952CJW33 (RAM)
+  SOC:=vr9
+  DDR_SETTINGS:=board/arcadyan/vgv952cjw33/ddr_settings.h
+  DEPS:=@TARGET_lantiq_xrx200
+endef
+
 UBOOTS:= \
 	arv4519pw_ram arv4519pw_nor arv4519pw_brn \
 	arv7506pw11_ram arv7506pw11_nor arv7506pw11_brn \
@@ -357,7 +364,8 @@ UBOOTS:= \
 	fb3370_eva fb3370_ram fb3370_sfspl \
 	p2812hnufx_ram p2812hnufx_nandspl \
 	vgv7510kw22_brn vgv7510kw22_nor vgv7510kw22_ram \
-	vgv7519_brn vgv7519_nor vgv7519_ram
+	vgv7519_brn vgv7519_nor vgv7519_ram \
+	vgv952cjw33_ram \
 
 define Package/uboot/template
 define Package/uboot-lantiq-$(1)

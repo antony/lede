@@ -564,6 +564,13 @@ define Device/VGV7519BRN
 endef
 TARGET_DEVICES += VGV7519BRN
 
+define Device/VGV952CJW33
+  $(Device/NAND)
+  DEVICE_TITLE := Easybox 904 / Arcadyan VGV952CJW33
+  DEVICE_PACKAGES := kmod-usb-dwc2 kmod-switch-rtl8367b
+endef
+TARGET_DEVICES += VGV952CJW33
+
 endif
 
 

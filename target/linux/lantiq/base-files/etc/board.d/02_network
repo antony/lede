@@ -146,6 +146,15 @@ VGV7519*)
 		"0:lan:4" "1:lan:3" "2:lan:2" "4:lan:1" "6t@eth0"
 	;;
 
+VGV952CJW33)
+	lan_mac=$(mtd_get_mac_ascii ubootconfig ethaddr)
+	wan_mac=$(macaddr_add "$lan_mac" 2)
+	ucidef_add_switch "switch0" \
+		"0:lan" "4:wan" "6t@eth0"
+	ucidef_add_switch "rtl8367rb" \
+		"0:lan" "1:lan" "2:lan" "3:lan" "6t@eth0"
+	;;
+
 WBMR)
 	ucidef_add_switch "switch0" \
 		"0t@eth0" "2:lan" "3:lan" "4:lan" "5:lan"
