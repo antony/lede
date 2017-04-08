@@ -21,170 +21,176 @@ interface_wan=""
 board=$(board_name)
 
 case "$board" in
-ACMP252|GIGASX76X)
-	ucidef_add_switch "switch0" \
-		"1:lan:4" "2:lan:3" "3:lan:2" "4:lan:1" "5t@eth0"
-	;;
-
-ALL0333CJ)
-	annex="b"
-	lan_mac=$(mtd_get_mac_ascii uboot_env ethaddr)
-	wan_mac=$(macaddr_add "$lan_mac" 1)
-	ucidef_set_interface_lan 'eth0'
-	;;
-
-ARV4510PW)
-	lan_mac=$(mtd_get_mac_ascii uboot_env ethaddr)
-	wan_mac=$(macaddr_add "$lan_mac" 1)
-	ucidef_add_switch "switch0" \
-		"0:lan:4" "2:lan:2" "1:lan:3" "3:lan:1" "5t@eth0"
-	;;
-
-ARV4519PW|ARV7510PW22|ARV7518PW|ARV752DPW22|ARV8539PW22)
-	ucidef_add_switch "switch0" \
-		"0t@eth0" "2:lan" "3:lan" "4:lan" "5:lan"
-	;;
-
-ARV4520PW)
-	ucidef_add_switch "switch0" \
-		"0:lan:4" "1:lan:3" "2:lan:2" "3:lan:1" "5t@eth0"
-	;;
-
-ARV7506PW11)
-	wan_mac=$(macaddr_add "$(mtd_get_mac_binary board_config 22)" 2)
-	ucidef_add_switch "switch0" \
-		"1:lan:4" "2:lan:3" "3:lan:2" "4:lan:1" "5t@eth0"
-	;;
-
-ARV7519PW)
-	wan_mac=$(macaddr_add "$(mtd_get_mac_binary board_config 22)" 1)
-	ucidef_add_switch "switch0" \
-		"0:lan" "1:lan" "2:lan" "3:lan" "4t@eth0"
-	;;
-
-ARV7519RW22)
-	wan_mac=$(macaddr_add "$(mtd_get_mac_binary boardconfig 22)" 1)
-	ucidef_add_switch "switch0" \
-		"0:lan:5" "2:lan:3" "3:lan:4" "4:lan:1" "5:lan:2" "6t@eth0"
-	;;
-
-ASL56026)
+alphanetworks,asl56026)
 	lan_mac=$(mtd_get_mac_ascii uboot_env ethaddr)
 	wan_mac=$(mtd_get_mac_ascii uboot_env wanmac)
 	ucidef_add_switch "switch0"\
 		"2:lan" "3:lan" "6t@eth0"
 	;;
 
-BTHOMEHUBV2B)
-	lan_mac=$(mtd_get_mac_ascii uboot_env ethaddr)
-	wan_mac=$(macaddr_add "$lan_mac" 1)
-	ucidef_add_switch "switch0" \
-		"1:lan" "2:lan" "3:lan" "4:lan" "5t@eth0"
-	;;
-
-BTHOMEHUBV3A)
+allnet,all0333cj)
+	annex="b"
 	lan_mac=$(mtd_get_mac_ascii uboot_env ethaddr)
 	wan_mac=$(macaddr_add "$lan_mac" 1)
 	ucidef_set_interface_lan 'eth0'
 	;;
 
-BTHOMEHUBV5A)
-	lan_mac=$(mtd_get_mac_binary_ubi caldata 4364)
+arcadian,arv4510pw)
+	lan_mac=$(mtd_get_mac_ascii uboot_env ethaddr)
 	wan_mac=$(macaddr_add "$lan_mac" 1)
 	ucidef_add_switch "switch0" \
-		"0:lan:3" "1:lan:4" "2:lan:2" "4:lan:1" "5:wan:5" "6t@eth0"
+		"0:lan:4" "2:lan:2" "1:lan:3" "3:lan:1" "5t@eth0"
 	;;
 
-DGN3500*)
+arcadian,arv4519pw|\
+arcadian,arv7510pw22|\
+arcadian,arv7518pw|\
+arcadian,arv752dpw22|\
+arcadian,arv8539pw22)
+	ucidef_add_switch "switch0" \
+		"0t@eth0" "2:lan" "3:lan" "4:lan" "5:lan"
+	;;
+
+arcadian,arv4520pw)
 	ucidef_add_switch "switch0" \
 		"0:lan:4" "1:lan:3" "2:lan:2" "3:lan:1" "5t@eth0"
 	;;
 
-DM200)
-	lan_mac=$(mtd_get_mac_binary ART 0)
-	wan_mac=$(macaddr_add "$lan_mac" 1)
-	ucidef_set_interface_lan 'eth0'
-	;;
-
-EASY80920NAND|EASY80920NOR)
-	lan_mac=$(mtd_get_mac_ascii uboot_env ethaddr)
-	wan_mac=$(macaddr_add "$lan_mac" 1)
+arcadian,arv7506pw11)
+	wan_mac=$(macaddr_add "$(mtd_get_mac_binary board_config 22)" 2)
 	ucidef_add_switch "switch0" \
-		"0:lan:4" "1:lan:3" "2:lan:2" "4:lan:1" "5:wan:5" "6t@eth0"
+		"1:lan:4" "2:lan:3" "3:lan:2" "4:lan:1" "5t@eth0"
 	;;
 
-FRITZ3370)
-	wan_mac=$(macaddr_add "$(mtd_get_mac_binary urlader 2439)" 1)
-	;;
-
-FRITZ7320)
-	wan_mac=$(macaddr_add "$(mtd_get_mac_binary urlader 2705)" 1)
-	;;
-
-FRITZ7360SL)
-	wan_mac=$(macaddr_add "$(mtd_get_mac_binary urlader 2705)" 1)
-	ucidef_add_switch "switch0" \
-		"0:lan:3" "1:lan:4" "2:lan:2" "4:lan:1" "6t@eth0"
-	;;
-
-H201L)
+arcadian,arv7519pw)
+	wan_mac=$(macaddr_add "$(mtd_get_mac_binary board_config 22)" 1)
 	ucidef_add_switch "switch0" \
 		"0:lan" "1:lan" "2:lan" "3:lan" "4t@eth0"
 	;;
 
-P2601HNFX)
+arcadian,arv7519rw22)
+	wan_mac=$(macaddr_add "$(mtd_get_mac_binary boardconfig 22)" 1)
 	ucidef_add_switch "switch0" \
-		"0:lan" "1:lan" "2:lan" "3:lan" "5t@eth0"
+		"0:lan:5" "2:lan:3" "3:lan:4" "4:lan:1" "5:lan:2" "6t@eth0"
 	;;
 
-P2812HNUF*)
-	lan_mac=$(mtd_get_mac_ascii uboot-env ethaddr)
-	wan_mac=$(macaddr_add "$lan_mac" 1)
-	ucidef_add_switch "switch0" \
-		"0:lan" "1:lan" "2:lan" "4:lan" "5:wan" "6t@eth0"
-	;;
-
-TDW8970|TDW8980)
-	wan_mac=$(macaddr_add "$(mtd_get_mac_binary boardconfig 61696)" 1)
-	ucidef_add_switch "switch0" \
-		"0:lan:2" "2:lan:3" "4:lan:4" "5:lan:1" "6t@eth0"
-	;;
-
-VG3503J)
+arcadian,vg3503j)
 	lan_mac=$(mtd_get_mac_ascii uboot-env ethaddr)
 	wan_mac=$(macaddr_add "$lan_mac" 1)
 	ucidef_add_switch "switch0" \
 		"2:lan:1" "4:lan:2" "6t@eth0"
 	;;
 
-VR200v)
-	wan_mac=$(macaddr_add "$(mtd_get_mac_binary romfile 61696)" 1)
-	ucidef_add_switch "switch0" \
-		"0:lan" "2:lan" "4:lan" "5:lan" "6t@eth0"
-	;;
-
-VGV7510KW22*)
+arcadian,vgv7510kw22*)
 	wan_mac=$(macaddr_add "$(mtd_get_mac_binary board_config 22)" 2)
 	ucidef_add_switch "switch0" \
 		"2:lan:2" "3:lan:1" "4:lan:4" "5:lan:3" "0:wan:5" "6t@eth0"
 	;;
 
-VGV7519*)
+arcadian,vgv7519*)
 	wan_mac=$(mtd_get_mac_binary board_config 22)
 	ucidef_add_switch "switch0" \
 		"0:lan:4" "1:lan:3" "2:lan:2" "4:lan:1" "5:wan:5" "6t@eth0"
 	;;
 
-WBMR)
+audiocodes,mp-252|\
+siemens,gigaset-sx76x)
+	ucidef_add_switch "switch0" \
+		"1:lan:4" "2:lan:3" "3:lan:2" "4:lan:1" "5t@eth0"
+	;;
+
+avm,fritz3370)
+	wan_mac=$(macaddr_add "$(mtd_get_mac_binary urlader 2439)" 1)
+	;;
+
+avm,fritz7320)
+	wan_mac=$(macaddr_add "$(mtd_get_mac_binary urlader 2705)" 1)
+	;;
+
+avm,fritz7360sl)
+	wan_mac=$(macaddr_add "$(mtd_get_mac_binary urlader 2705)" 1)
+	ucidef_add_switch "switch0" \
+		"0:lan:3" "1:lan:4" "2:lan:2" "4:lan:1" "6t@eth0"
+	;;
+
+bt,homehub-v2b)
+	lan_mac=$(mtd_get_mac_ascii uboot_env ethaddr)
+	wan_mac=$(macaddr_add "$lan_mac" 1)
+	ucidef_add_switch "switch0" \
+		"1:lan" "2:lan" "3:lan" "4:lan" "5t@eth0"
+	;;
+
+bt,homehub-v3a)
+	lan_mac=$(mtd_get_mac_ascii uboot_env ethaddr)
+	wan_mac=$(macaddr_add "$lan_mac" 1)
+	ucidef_set_interface_lan 'eth0'
+	;;
+
+bt,homehub-v5a)
+	lan_mac=$(mtd_get_mac_binary_ubi caldata 4364)
+	wan_mac=$(macaddr_add "$lan_mac" 1)
+	ucidef_add_switch "switch0" \
+		"0:lan:3" "1:lan:4" "2:lan:2" "4:lan:1" "5:wan:5" "6t@eth0"
+	;;
+
+buffalo,wbmr-hp-g300h)
 	ucidef_add_switch "switch0" \
 		"0t@eth0" "2:lan" "3:lan" "4:lan" "5:lan"
 	;;
 
-WBMR300)
+buffalo,wbmr-300hpd)
 	lan_mac=$(mtd_get_mac_ascii ubootconfig ethaddr)
 	wan_mac="$lan_mac"
 	ucidef_add_switch "switch0" \
 		"5:lan:2" "2:lan:3" "3:lan:4" "4:wan:1" "6t@eth0"
+	;;
+
+intel,easy80920*)
+	lan_mac=$(mtd_get_mac_ascii uboot_env ethaddr)
+	wan_mac=$(macaddr_add "$lan_mac" 1)
+	ucidef_add_switch "switch0" \
+		"0:lan:4" "1:lan:3" "2:lan:2" "4:lan:1" "5:wan:5" "6t@eth0"
+	;;
+
+netgear,dgn3500*)
+	ucidef_add_switch "switch0" \
+		"0:lan:4" "1:lan:3" "2:lan:2" "3:lan:1" "5t@eth0"
+	;;
+
+netgear,dm200)
+	lan_mac=$(mtd_get_mac_binary ART 0)
+	wan_mac=$(macaddr_add "$lan_mac" 1)
+	ucidef_set_interface_lan 'eth0'
+	;;
+
+tp-link,tdw8970|\
+tp-link,tdw8980)
+	wan_mac=$(macaddr_add "$(mtd_get_mac_binary boardconfig 61696)" 1)
+	ucidef_add_switch "switch0" \
+		"0:lan:2" "2:lan:3" "4:lan:4" "5:lan:1" "6t@eth0"
+	;;
+
+tp-link,vr200v)
+	wan_mac=$(macaddr_add "$(mtd_get_mac_binary romfile 61696)" 1)
+	ucidef_add_switch "switch0" \
+		"0:lan" "2:lan" "4:lan" "5:lan" "6t@eth0"
+	;;
+
+zte,h201l)
+	ucidef_add_switch "switch0" \
+		"0:lan" "1:lan" "2:lan" "3:lan" "4t@eth0"
+	;;
+
+zyxel,p-2601hn)
+	ucidef_add_switch "switch0" \
+		"0:lan" "1:lan" "2:lan" "3:lan" "5t@eth0"
+	;;
+
+zyxel,p-2812hnu-f*)
+	lan_mac=$(mtd_get_mac_ascii uboot-env ethaddr)
+	wan_mac=$(macaddr_add "$lan_mac" 1)
+	ucidef_add_switch "switch0" \
+		"0:lan" "1:lan" "2:lan" "4:lan" "5:wan" "6t@eth0"
 	;;
 
 *)
