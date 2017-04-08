@@ -3,5 +3,6 @@
 #include "TDW89X0.dtsi"
 
 / {
+	compatible = "tp-link,tdw8970", "lantiq,xway", "lantiq,vr9";
 	model = "TDW8970 - TP-LINK TD-W8970";
 };

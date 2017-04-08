@@ -3,6 +3,7 @@
 #include "TDW89X0.dtsi"
 
 / {
+	compatible = "tp-link,tdw8980", "lantiq,xway", "lantiq,vr9";
 	model = "TDW8980 - TP-LINK TD-W8980";
 
 	fpi@10000000 {
