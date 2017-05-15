@@ -11,15 +11,7 @@ mcs814x_board_detect() {
 	local name
 
 	machine=$(cat /proc/device-tree/model)
-
-	case "$machine" in
-	*"Devolo dLAN USB Extender")
-		name="dlan-usb-extender"
-		;;
-	*"Tigal RBT-832")
-		name="rbt-832"
-		;;
-	esac
+	name=$(strings /proc/device-tree/compatible | head -1)
 
 	[ -z "$name" ] && name="unknown"
 
