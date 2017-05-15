@@ -28,7 +28,7 @@ platform_check_image() {
 	[ "$#" -gt 1 ] && return 1
 
 	case $board in
-	tl-wdr4900-v1)
+	tplink,tl-wdr4900-v1)
 		[ "$magic" != "01000000" ] && {
 			echo "Invalid image type."
 			return 1

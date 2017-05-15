@@ -11,12 +11,7 @@ mpc85xx_board_detect() {
 	local name
 
 	model=$(awk 'BEGIN{FS="[ \t]+:[ \t]"} /model/ {print $2}' /proc/cpuinfo)
-
-	case "$model" in
-	*"TL-WDR4900 v1")
-		name="tl-wdr4900-v1"
-		;;
-	esac
+	name=$(strings /proc/device-tree/compatible | head -1)
 
 	[ -z "$name" ] && name="unknown"
 

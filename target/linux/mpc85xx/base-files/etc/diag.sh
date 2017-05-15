@@ -6,7 +6,7 @@
 
 get_status_led() {
         case $(board_name) in
-        tl-wdr4900-v1)
+        tplink,tl-wdr4900-v1)
                 status_led="tp-link:blue:system"
                 ;;
         esac
