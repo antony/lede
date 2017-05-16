@@ -11,15 +11,7 @@ mxs_board_detect() {
 	local name
 
 	machine=$(cat /proc/device-tree/model)
-
-	case "$machine" in
-	*"I2SE Duckbill"*)
-		name="duckbill"
-		;;
-	*"i.MX23 Olinuxino Low Cost Board")
-		name="olinuxino"
-		;;
-	esac
+	name=$(strings /proc/device-tree/compatible | head -1)
 
 	[ -z "$name" ] && name="unknown"
 
